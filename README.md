@@ -6,7 +6,7 @@ A pesquisa investiga se um relógio comercial, o Amazfit Bip 6 com Zepp OS, cons
 
 Este repositório é a **primeira etapa experimental**. Antes de investir em curvas elípticas, ele verifica o que o runtime do relógio realmente oferece, se dá para fazer criptografia moderna nele e se o caminho **relógio → celular → servidor** funciona de ponta a ponta.
 
-> **Resultado principal:** o relógio cifrou uma mensagem com **AES-128-CBC + HMAC-SHA256 em JavaScript puro** (formato **JWE `dir` + `A128CBC-HS256`**, RFC 7516/7518). Ela foi transportada por BLE até o app Zepp no iPhone, enviada por HTTPS a um servidor na Vercel, e o servidor **decifrou com sucesso**. O caminho até lá exigiu abandonar a API nativa de criptografia do relógio, que se mostrou inutilizável no Bip 6 e, com um tipo de argumento, **reinicia o aparelho**.
+> **Resultado principal:** o relógio cifrou uma mensagem com **AES-128-CBC + HMAC-SHA256 em JavaScript puro** (formato **JWE `dir` + `A128CBC-HS256`**, RFC 7516/7518). Ela foi transportada por BLE até o app Zepp no iPhone, enviada por HTTPS a um servidor na Vercel, e o servidor **decifrou com sucesso**. No teste final (20 nov. 2026), cifrar a mensagem levou **143 ms** no relógio. O caminho até lá exigiu abandonar a API nativa de criptografia do relógio, que se mostrou inutilizável no Bip 6 e, com um tipo de argumento, **reinicia o aparelho**.
 
 ## Resumo dos achados
 
@@ -16,8 +16,8 @@ Este repositório é a **primeira etapa experimental**. Antes de investir em cur
 | Runtime JS | ES2020 compila; `Promise` e `setTimeout` **existem**, ao contrário do que diz a doc; não há `TextEncoder`, `atob`/`btoa` nem `eval` | Corrige a seção 2.2 da proposta; UTF-8 e base64 precisam ser implementados |
 | Crypto nativo (`@zos/crypto`) | `encrypt` de SHA-256, HMAC e AES devolve `undefined` com `Uint8Array`/`ArrayBuffer`; **AES com `number[]` reinicia o relógio**; o ECDSA nativo só aceita digest MD5 | Crypto nativo descartado. Toda a criptografia passa a ser JS puro |
 | Aleatoriedade | `getRandomValues` não existe (API 5.0). **`createChiper()` gera chaves aleatórias**: 128 chaves sem repetição, χ² = 270,3 (z = 0,68), ~301 ms por chave | Fonte de entropia utilizável para gerar chave e IV (H7); a assinatura não precisa dela se usar RFC 6979 |
-| JS puro | AES-128, SHA-256 e HMAC-SHA256 próprios, conferidos contra OpenSSL e `jose` (~1.150 casos aleatórios); KAT no relógio com vetores FIPS/NIST/RFC | HMAC-SHA256 é a base do RFC 6979; aritmética de 32 bits roda bem no runtime |
-| Transporte | Relógio → BLE (ZML) → Side Service (Zepp/iOS) → HTTPS: ok, inclusive com mensagens de 4,8 KB fragmentadas; 189–479 ms do celular ao servidor | Infraestrutura pronta para as próximas fases (RQ2) |
+| JS puro | AES-128, SHA-256 e HMAC-SHA256 próprios, conferidos contra OpenSSL e `jose` (~1.150 casos aleatórios); KAT no relógio com vetores FIPS/NIST/RFC; **no relógio, cifrar um JWE de 43 bytes levou 143 ms** (3 blocos AES + 6 compressões SHA-256) e gerar o IV, 349 ms | HMAC-SHA256 é a base do RFC 6979; aritmética de 32 bits roda bem no runtime |
+| Transporte | Relógio → BLE (ZML) → Side Service (Zepp/iOS) → HTTPS: ok, inclusive com mensagens de 4,8 KB fragmentadas; 189–1.238 ms do celular ao servidor e de volta | Infraestrutura pronta para as próximas fases (RQ2) |
 | Modelo de ameaça | Em modo desenvolvedor, o app Zepp **registra em log todo payload BLE** do relógio | Evidência concreta para o adversário A1 e para a RQ4 |
 | Robustez | Uma chamada nativa pode reiniciar o relógio inteiro. Foi criado um mecanismo de "migalhas" que identifica a chamada culpada no reboot seguinte e a bloqueia | Metodologia reaproveitável para testar APIs nativas sem repetir crashes |
 
@@ -92,4 +92,4 @@ Cada botão mostra o resultado na tela, registra o relatório completo no log do
 - **A chave em `shared/config.js` é só de teste.** Ela fica no código-fonte e no pacote instalado. Não use para nada real.
 - **As implementações de AES/SHA-256/HMAC são próprias.** Foram conferidas contra OpenSSL e `jose`, mas não foram auditadas, e o AES por tabela não roda em tempo constante. Servem para medir viabilidade, não para produção.
 - **A qualidade do `createChiper()` como fonte de entropia só passou por testes estatísticos simples** (128 amostras). Isso não prova qualidade criptográfica.
-- **Os tempos de execução do KAT em JS puro no relógio ainda não foram coletados** para este repositório (ver [Próximos passos](docs/06-proximos-passos.md)).
+- **Os tempos medidos no relógio vêm de uma única execução** (143 ms para cifrar, 349 ms para gerar o IV). O custo por primitiva (botão 2 · KAT) ainda não foi coletado (ver [Próximos passos](docs/06-proximos-passos.md)).

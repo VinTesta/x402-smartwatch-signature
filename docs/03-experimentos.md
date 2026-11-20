@@ -1,6 +1,6 @@
 # 3. Diário de experimentos
 
-Os experimentos estão em ordem cronológica e foram feitos em 19 nov. 2026. Cada um registra o objetivo, o método, o resultado e a evidência. As versões do app citadas (v1–v4) correspondem a iterações sucessivas do mini app instalado no relógio pelo `zeus bridge`.
+Os experimentos estão em ordem cronológica e foram feitos em 19 e 20 nov. 2026. Cada um registra o objetivo, o método, o resultado e a evidência. As versões do app citadas (v1–v4) correspondem a iterações sucessivas do mini app instalado no relógio pelo `zeus bridge`.
 
 **Ambiente:**
 
@@ -166,6 +166,20 @@ Nenhuma anomalia grosseira. A amostra é pequena e **não prova qualidade cripto
   - `zeus build` compilando tudo com o `qjsc`.
 - **No relógio:** o botão **2 · KAT** recalcula os vetores oficiais e um token JWE de referência (gerado pelo OpenSSL e aceito pelo `jose`) e mede os tempos. O botão **4 · Enviar msg** cifra uma mensagem UTF-8 com acentos e o caractere "✓", e o servidor decifra.
 
-**Resultado:** **o servidor recebeu o JWE gerado no relógio e o decifrou com sucesso.** Nenhuma operação nativa de cifra ou hash foi chamada; a simulação exige zero chamadas e o bytecode foi conferido.
+**Resultado:** **o servidor recebeu o JWE gerado no relógio e o decifrou com sucesso** (19 e 20 nov. 2026). Nenhuma operação nativa de cifra ou hash foi chamada; a simulação exige zero chamadas e o bytecode foi conferido.
 
-**Pendente:** registrar neste repositório o resultado do botão **2 · KAT** da v4 (vetores e tempos em ms). É a primeira medida real do custo de criptografia em JS puro no Bip 6 (ver [resultados](04-resultados.md)).
+Teste registrado em 20 nov. 2026, 21:52 UTC:
+
+| Medida | Valor |
+|---|---|
+| Texto decifrado pelo servidor | `Olá do Bip 6! ação ✓ #1 @1795211549696` (43 bytes UTF-8) |
+| Conferência independente | o mesmo token decifra com `npm run decode` e com a biblioteca `jose` |
+| Cifrar no relógio (`seal_ms`) | **143 ms**: 3 blocos AES-128-CBC + HMAC-SHA256 de 139 bytes (6 compressões SHA-256) + codificações |
+| Gerar o IV (`rng_ms`) | **349 ms**: 1 chave do firmware (~301 ms no E5) + 1 compressão SHA-256 |
+| Frames BLE | 403 bytes (relógio → celular) e 339 bytes (resposta) |
+| Side Service → servidor → Side Service | 1.238 ms (primeira requisição após ~1 dia sem uso da função) |
+| Criação da mensagem → chegada no celular | ≈ 1,5 s, com relógios **não sincronizados**; inclui ~0,5 s de criptografia e a abertura do Side Service pelo app Zepp (`peerAppLaunched`) |
+
+São valores de **uma única execução**.
+
+**Pendente:** registrar o resultado do botão **2 · KAT** da v4 (vetores e tempos por primitiva) e repetir o envio várias vezes para ter mediana e p95. O KAT separa o custo de cada primitiva em JS puro no Bip 6 (ver [resultados](04-resultados.md)).

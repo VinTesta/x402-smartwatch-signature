@@ -63,16 +63,16 @@ token      = BASE64URL(cabeçalho) . "" . BASE64URL(IV) . BASE64URL(E) . BASE64U
 O relógio envia ao celular:
 
 ```json
-{ "jwe": "eyJhbGciOiJkaXIi...", "rng": "aes-keygen+sha256", "rng_ms": 301, "seal_ms": 12 }
+{ "jwe": "eyJhbGciOiJkaXIi...", "rng": "aes-keygen+sha256", "rng_ms": 349, "seal_ms": 143 }
 ```
 
 e o servidor responde:
 
 ```json
-{ "ok": true, "kind": "aes.msg", "plaintext": "Olá do Bip 6! ação ✓ #1 @...", "kid": "test-1", ... }
+{ "ok": true, "kind": "aes.msg", "plaintext": "Olá do Bip 6! ação ✓ #1 @1795211549696", "bytes": 43, "kid": "test-1", ... }
 ```
 
-> Os valores de `rng_ms` e `seal_ms` acima são ilustrativos. Os tempos reais desta versão ainda não foram coletados (ver [resultados](04-resultados.md)).
+> Valores reais do teste final no Bip 6, em 20 nov. 2026 (ver [`evidencias/05-teste-final-jwe.json`](evidencias/05-teste-final-jwe.json)).
 
 ## Aleatoriedade
 

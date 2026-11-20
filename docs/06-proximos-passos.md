@@ -4,7 +4,8 @@ A Fase 1 deixou pronta a infraestrutura (relógio → BLE → app Zepp → servi
 
 ## 6.0 Fechar a Fase 1
 
-- [ ] Rodar **2 · KAT** e **4 · Enviar msg** na v4 e registrar em [Resultados](04-resultados.md) os vetores (todos devem passar) e os tempos: AES-CBC 1 KB, SHA-256 1 KB, HMAC 1 KB, JWE de 100 bytes, custo do IV.
+- [x] **4 · Enviar msg** na v4: o servidor decifrou; cifrar levou 143 ms e o IV, 349 ms (20 nov. 2026, 1 amostra).
+- [ ] **2 · KAT** na v4: registrar em [Resultados](04-resultados.md) os vetores (todos devem passar) e os tempos por primitiva: AES-CBC 1 KB, SHA-256 1 KB, HMAC 1 KB, JWE de 100 bytes.
 - [ ] Coletar várias execuções (≥ 10) para ter mediana e p95, não só um ponto.
 - [ ] Opcional: repetir 1 · Sondagem e 3 · RNG para conferir estabilidade entre sessões.
 

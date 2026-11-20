@@ -60,5 +60,5 @@ Tudo que normalmente vem pronto foi reimplementado: UTF-8, base64/base64url, hex
 - **Não usar API nativa no caminho crítico da assinatura.** A Fase 2 será 100% JS puro, validada byte a byte contra bibliotecas de referência no Node.
 - **Toda chamada nativa nova** (por exemplo, testar o `encryptKey` para proteger a chave em repouso) **passa por `nat()`**, com migalha, e é testada isoladamente, uma por versão.
 - **Vetores determinísticos são a melhor ferramenta.** O RFC 6979 produz assinaturas determinísticas, então o relógio pode comparar sua assinatura com a da referência byte a byte, como já faz com o token JWE no KAT.
-- **Medir no relógio, não estimar.** Os tempos do KAT da v4 ainda faltam e devem ser coletados antes de dimensionar a Fase 2.
+- **Medir no relógio, não estimar.** Já há uma amostra (143 ms para cifrar um JWE de 43 bytes). O custo por primitiva (KAT) e várias repetições ainda faltam e devem ser coletados antes de dimensionar a Fase 2.
 - **Fixar a região do servidor e instrumentar os carimbos de tempo** nos três pontos (relógio, Side Service, servidor), conforme o procedimento da proposta.

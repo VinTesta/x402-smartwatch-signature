@@ -24,6 +24,6 @@
     "versaoDoApp": "v4 (AES-128-CBC + HMAC-SHA256 em JS puro, JWE dir + A128CBC-HS256)",
     "data": "2026-11-19",
     "resultado": "O servidor recebeu o JWE gerado no relógio e o decifrou com sucesso (confirmação do autor no teste com o aparelho).",
-    "pendente": "tempos do botão '2 · KAT' (perf) desta versão ainda não foram coletados para o repositório"
+    "detalhes": "ver 05-teste-final-jwe.json (teste de 2026-11-20 com tempos e token)"
   }
 }

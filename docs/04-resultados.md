@@ -54,7 +54,8 @@ Não há anomalias grosseiras. Um IV de 16 bytes custa ~0,3 s. A assinatura ECDS
 |---|---|
 | Payload útil por frame BLE (ZML) | 3.584 bytes; maior frame observado: 3.600 bytes |
 | Mensagem fragmentada | 4.806 bytes em 2 frames, entregue íntegra |
-| Side Service → servidor → Side Service | 479 ms (1ª da sessão), 215 ms, 189 ms |
+| Side Service → servidor → Side Service | 479 ms (1ª da sessão), 215 ms, 189 ms (19 nov.); 1.238 ms (20 nov., 1ª requisição após ~1 dia sem uso) |
+| Criação da mensagem no relógio → chegada no celular | ≈ 1,5 s (1 amostra, relógios não sincronizados; inclui ~0,5 s de criptografia e a abertura do Side Service) |
 | Região da função | `iad1` (EUA), borda `gru1` (São Paulo) |
 
 As medições ainda são poucas e foram feitas sem instrumentação de carimbos de tempo no relógio. A decomposição da latência (RQ2) será medida com rigor nas próximas fases. Para isso, a função do servidor deve ser fixada numa região próxima.
@@ -78,13 +79,14 @@ As medições ainda são poucas e foram feitas sem instrumentação de carimbos 
 
 | Medida | Resultado |
 |---|---|
-| Mensagem JWE do relógio decifrada pelo servidor | **sucesso** (teste do autor com o Bip 6) |
+| Mensagem JWE do relógio decifrada pelo servidor | **sucesso** (19 e 20 nov.); o token de 20 nov. também decifra com `jose` |
 | KAT no relógio (AES bloco, CBC, SHA-256, HMAC, JWE) | **a registrar** |
 | AES-128-CBC 1 KB (ms) | **a registrar** |
 | SHA-256 1 KB (ms) | **a registrar** |
 | HMAC-SHA256 1 KB (ms) | **a registrar** |
 | JWE de 100 bytes (ms) | **a registrar** |
-| Custo do IV (keygen, ms) | **a registrar** (estimativa: ~300 ms, pelo E5) |
+| **Cifrar o JWE de 43 bytes** (`seal_ms`: 3 blocos AES + 6 compressões SHA-256 + codificações) | **143 ms** (1 amostra) |
+| **Gerar o IV** (`rng_ms`: keygen do firmware + 1 compressão SHA-256) | **349 ms** (1 amostra) |
 
 > Para preencher: rodar **2 · KAT** e **4 · Enviar msg** na v4 e copiar o JSON do log do `zeus bridge` (linhas `[aes.kat]` e `[aes.msg]`) ou da resposta do servidor. Como o relógio mede só 5 repetições, o tempo do SHA-256 por bloco de 64 bytes servirá de primeira estimativa do custo do Keccak-256, que também usa só operações de 32 bits.
 
@@ -95,7 +97,7 @@ A Fase 1 não testa nenhuma hipótese diretamente: a assinatura ECDSA é a Fase 
 | Hipótese | Situação após a Fase 1 |
 |---|---|
 | **H1. Viabilidade** sem `BigInt` | Premissa confirmada (sem `BigInt`). Aritmética de 32 bits correta no runtime (SHA-256/HMAC/AES). **secp256k1 ainda não testado.** |
-| **H2. Custo da assinatura** | Sem dados. Os tempos do KAT da v4 darão a primeira referência de velocidade do runtime. |
+| **H2. Custo da assinatura** | Primeira referência de velocidade do runtime: 143 ms para 6 compressões SHA-256 + 3 blocos AES (1 amostra). O custo por primitiva (KAT) ainda falta. secp256k1 não testado. |
 | **H5. Conferência barata** (EIP-712) | Sem dados. O SHA-256 em JS servirá de base para estimar o Keccak-256. |
 | **H7. Entropia** | Evidência favorável: `createChiper()` fornece bytes sem anomalia grosseira (128 amostras). Falta estimar a entropia mínima e combinar com outras fontes. |
 | **H8. Canal só nega serviço** | Observação relevante: o app Zepp vê e registra tudo. A integridade dependerá só da assinatura e da conferência no relógio. |
@@ -111,4 +113,4 @@ A Fase 1 não testa nenhuma hipótese diretamente: a assinatura ECDSA é a Fase 
 | Servidor decifra e confere a integridade | ✅ |
 | Adulteração rejeitada | ✅ (testado localmente e contra o servidor em produção) |
 | Usar a API nativa do relógio | ❌ inviável no Bip 6 fw 4.6.0.3 (ver 4.2) |
-| Tempos medidos no relógio | ⏳ pendente |
+| Tempos medidos no relógio | ◐ parcial: cifrar 143 ms e IV 349 ms (1 amostra); custo por primitiva (KAT) pendente |
