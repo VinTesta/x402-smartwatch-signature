@@ -1,0 +1,10 @@
+# dependências e artefatos de build (regeneráveis com npm install / zeus build)
+node_modules/
+dist/
+*.zab
+*.zpk
+
+# sistema / editor
+.DS_Store
+.vscode/
+*.log

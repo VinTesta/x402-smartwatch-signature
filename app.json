@@ -1,0 +1,59 @@
+{
+  "configVersion": "v3",
+  "app": {
+    "appId": 28626,
+    "appName": "CryptoTest",
+    "appType": "app",
+    "version": {
+      "code": 1,
+      "name": "1.0.0"
+    },
+    "icon": "icon.png",
+    "vender": "zepp",
+    "description": "Fase 1: AES-128-CBC + HMAC-SHA256 em JS puro (JWE A128CBC-HS256) no Bip 6"
+  },
+  "permissions": [
+    "data:os.device.info",
+    "device:os.local_storage"
+  ],
+  "runtime": {
+    "apiVersion": {
+      "compatible": "4.0",
+      "target": "4.0",
+      "minVersion": "4.0"
+    }
+  },
+  "targets": {
+    "default": {
+      "module": {
+        "page": {
+          "pages": [
+            "page/index"
+          ]
+        },
+        "app-side": {
+          "path": "app-side/index"
+        },
+        "setting": {
+          "path": "setting/index"
+        }
+      },
+      "platforms": [
+        {
+          "st": "s",
+          "dw": 390
+        },
+        {
+          "st": "r",
+          "dw": 480
+        }
+      ]
+    }
+  },
+  "i18n": {
+    "en-US": {
+      "appName": "CryptoTest"
+    }
+  },
+  "defaultLanguage": "en-US"
+}
