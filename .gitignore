@@ -1,10 +1,20 @@
-# dependências e artefatos de build (regeneráveis com npm install / zeus build)
+# contexto local do projeto (ver CLAUDE.md)
+.project-context/
+
+# dependências e artefatos de build
 node_modules/
 dist/
 *.zab
 *.zpk
 
+# segredos
+.env
+.env.*
+!.env.example
+.vercel/
+
 # sistema / editor
 .DS_Store
 .vscode/
+.idea/
 *.log
