@@ -12,7 +12,10 @@
     "vender": "zepp",
     "description": "empty application"
   },
-  "permissions": [],
+  "permissions": [
+    "data:os.device.info",
+    "device:os.local_storage"
+  ],
   "runtime": {
     "apiVersion": {
       "compatible": "4.0",
@@ -36,6 +39,10 @@
         }
       },
       "platforms": [
+        {
+          "st": "s",
+          "dw": 390
+        },
         {
           "st": "r",
           "dw": 480

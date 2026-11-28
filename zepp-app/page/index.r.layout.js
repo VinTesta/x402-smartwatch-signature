@@ -1,6 +1,2 @@
-import { px } from "@zos/utils";
-
-export const TEXT_STYLE = {
-  x: px(0),
-  y: px(0),
-}
+// Layout compartilhado (calcula posições a partir do tamanho real da tela).
+export * from '../utils/layout.js'

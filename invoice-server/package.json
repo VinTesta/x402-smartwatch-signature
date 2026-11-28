@@ -1,0 +1,16 @@
+{
+  "name": "invoice-server",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Servidor de cobrança: corpo EIP-712 (TransferWithAuthorization) para o relógio assinar e validação da assinatura",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "viem": "^2.58.6"
+  }
+}
